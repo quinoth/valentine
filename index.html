@@ -515,7 +515,7 @@
             });
         });
 
-        // Логика "Нет"/"Да" + смена гифок
+        // Логика "Нет"/"Да" + смена гифок (без залипания, моментальная смена)
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
         const proposalText = document.getElementById('proposal-text');
@@ -529,7 +529,13 @@
             noClickCount++;
 
             const gifIndex = Math.min(noClickCount, catImages.length - 1);
-            proposalGif.src = catImages[gifIndex];
+            const baseSrc = catImages[gifIndex];
+
+            // мгновенно меняем гифку: скрыть → сменить src с cache-bust → показать
+            proposalGif.style.visibility = 'hidden';
+            proposalGif.offsetHeight; // форсим рефлоу
+            proposalGif.src = baseSrc + (baseSrc.includes('?') ? '&' : '?') + 't=' + Date.now();
+            proposalGif.style.visibility = 'visible';
 
             if (noClickCount === 1) {
                 proposalText.textContent = 'Ты хотела нажать "Да"?';
