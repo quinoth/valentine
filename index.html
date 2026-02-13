@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моей любимой</title>
+    <title>Для Моей Вечной Валентины</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Parisienne&family=Poppins:wght@300;400;600&display=swap"
         rel="stylesheet">
@@ -352,7 +352,7 @@
     <!-- Экран 5: Праздник -->
     <div class="container" id="screen-celebration">
         <h1>Я Знал!</h1>
-        <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M2Nua2dkOXhwaTg0M3д3bXBtcDdra25scXB3MHZtZTVhamd5dnpoNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l4FGyGSeCm7pOhzKo/giphy.gif" alt="Celebration"
+        <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M2Nua2dkOXhwaTg0M3d3bXBtcDdra25scXB3MHZtZTVhamd5dnpoNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l4FGyGSeCm7pOhzKo/giphy.gif" alt="Celebration"
             style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
         <p>Я так люблю тебя! Не могу дождаться нашей встречи!</p>
     </div>
@@ -362,7 +362,7 @@
         const loveLetterText = "Дорогая моя, С момента нашей встречи мой мир стал ярче. Твоя улыбка — мой любимый вид, а твой смех — мой любимый звук. Я дорожу каждым моментом, проведённым вместе, и хочу создать миллион новых воспоминаний с тобой. Итак, у меня есть очень важный вопрос...";
 
         const catImages = [
-            "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWлиMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
+            "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
             "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnZvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
             "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExamlhbGdkMHZtdzYwYXNrY3MzcWh3c3U1NTdncTdkMDBneDBlMzFsaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/pY8jLmZw0ElqvVeRH4/giphy.gif",
             "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M3FzNjFxcGRma3kzMHRuMzI2dmZhb2UyMm02ZHB4Z2s2YWZzNzR6NiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fFa05KbZowXiEIyRse/giphy.gif"
@@ -478,6 +478,22 @@
             });
         }
 
+        // Обновляем активную точку при скролле/свайпе
+        function setActiveDotByScroll() {
+            const width = sliderWrapper.clientWidth || slides[0].clientWidth;
+            if (!width) return;
+            const index = Math.round(sliderWrapper.scrollLeft / width);
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        sliderWrapper.addEventListener('scroll', () => {
+            clearTimeout(sliderWrapper._dotTimeout);
+            sliderWrapper._dotTimeout = setTimeout(setActiveDotByScroll, 50);
+        });
+
+        // клики по точкам
         dots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const idx = parseInt(dot.dataset.index, 10);
