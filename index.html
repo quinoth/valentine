@@ -14,7 +14,7 @@
             --accent-color: #fff0f3;
             --text-color: #fff;
             --bg-gradient: linear-gradient(135deg, #2e001f 0%, #680026 100%);
-            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.15);
         }
         * {
@@ -35,6 +35,17 @@
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
             overscroll-behavior: none;
+        }
+
+        /* Постоянный размытый слой поверх градиента */
+        .glass-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            pointer-events: none;
         }
 
         canvas#hearts {
@@ -69,8 +80,8 @@
 
         .container {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             border: 1px solid var(--glass-border);
             padding: 2.5rem;
             border-radius: 25px;
@@ -234,52 +245,44 @@
             margin-bottom: 1rem;
         }
 
-    @media (max-width: 600px) {
-        body {
-            align-items: stretch;
+        @media (max-width: 600px) {
+            body {
+                align-items: stretch;
+            }
+            .container {
+                width: 100%;
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 1.5rem 1.2rem 2.5rem;
+                justify-content: center;
+                padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+            }
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 1rem;
+            }
+            p {
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+            }
+            .letter-content {
+                font-size: 1.3rem;
+                max-height: 50vh;
+                line-height: 1.6;
+            }
+            .btn {
+                width: 100%;
+                max-width: 260px;
+                text-align: center;
+            }
+            .proposal-btns {
+                gap: 10px;
+            }
+            .slide {
+                height: 430px;
+            }
         }
-    
-        .container {
-            width: 100%;
-            max-width: 100%;
-            height: 100vh;
-            border-radius: 0;
-            padding: 1.5rem 1.2rem 2.5rem; /* было 2rem — чуть больше снизу */
-            justify-content: center;
-            padding-bottom: calc(2.5rem + env(safe-area-inset-bottom)); /* учёт панели Safari */
-        }
-    
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-        }
-    
-        p {
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-    
-        .letter-content {
-            font-size: 1.3rem;
-            max-height: 50vh; /* немного меньше высота, чтобы низ не упирался в панель */
-            line-height: 1.6;
-        }
-    
-        .btn {
-            width: 100%;
-            max-width: 260px;
-            text-align: center;
-        }
-    
-        .proposal-btns {
-            gap: 10px;
-        }
-    
-        .slide {
-            height: 430px; /* чуть ниже, чтобы кнопка была выше */
-        }
-    }
-
 
         @supports (-webkit-overflow-scrolling: touch) {
             h1 {
@@ -292,6 +295,7 @@
     </style>
 </head>
 <body>
+    <div class="glass-overlay"></div>
     <canvas id="hearts"></canvas>
     <div id="particles"></div>
 
@@ -357,7 +361,6 @@
     <script>
         const loveLetterText = "Дорогая моя,\nС момента нашей встречи мой мир стал ярче.\nТвоя улыбка - мой любимый вид, а твой смех - мой любимый звук.\nЯ дорожу каждым моментом, проведённым вместе, и хочу создать миллион новых воспоминаний с тобой.\nИтак, у меня есть очень важный вопрос...";
 
-        // Базовые URL гифок
         const catImages = [
             "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
             "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnZvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
@@ -365,9 +368,7 @@
             "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M3FzNjFxcGRma3kzMHRuMzI2dmZhb2UyMm02ZHB4Z2s2YWZzNzR6NiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fFa05KbZowXiEIyRse/giphy.gif"
         ];
 
-        // Предзагрузчик гифок, чтобы при клике не было задержки
         const preloadedGifs = [];
-
         function preloadGifs() {
             catImages.forEach((src, idx) => {
                 const img = new Image();
@@ -516,11 +517,9 @@
             const gifIndex = Math.min(noClickCount, catImages.length - 1);
             const baseSrc = catImages[gifIndex];
 
-            // мгновенный ресет и смена гифки (без ожидания анимаций/transition)
-            const tmp = baseSrc;
+            // мгновенный ресет и смена гифки
             proposalGif.src = '';
-            // без таймаута, чтобы iOS сразу перерисовал (синхронная смена src)
-            proposalGif.src = tmp;
+            proposalGif.src = baseSrc;
 
             if (noClickCount === 1) {
                 proposalText.textContent = 'Ты хотела нажать "Да"?';
@@ -569,9 +568,7 @@
             }
         }
 
-        // стартуем предзагрузку гифок
         preloadGifs();
     </script>
 </body>
 </html>
-
