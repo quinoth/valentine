@@ -37,7 +37,6 @@
             overscroll-behavior: none;
         }
 
-        /* Canvas с падающими сердцами */
         canvas#hearts {
             position: fixed;
             top: 0;
@@ -47,7 +46,6 @@
             z-index: -2;
         }
 
-        /* Particle Background */
         #particles {
             position: absolute;
             top: 0;
@@ -64,20 +62,11 @@
             animation: float 10s infinite linear;
         }
         @keyframes float {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            50% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-10vh) scale(1);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
-        /* Основные контейнеры/экраны */
         .container {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
@@ -106,7 +95,6 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Заголовки — тот же шрифт, что и письмо, для一致ности на iOS */
         h1 {
             font-family: 'Dancing Script', 'Parisienne', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 3.2rem;
@@ -124,7 +112,6 @@
             color: #eee;
         }
 
-        /* Кнопки */
         .btn {
             padding: 12px 28px;
             font-size: 1.05rem;
@@ -163,16 +150,12 @@
             width: 100%;
             margin-top: 0.5rem;
         }
-        #yesBtn {
-            position: relative;
-            z-index: 1;
-        }
+        #yesBtn { position: relative; z-index: 1; }
         #noBtn {
             background: #4a4a4a;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        /* Горизонтальный слайдер воспоминаний (CSS Scroll Snap) */
         .slider-wrapper {
             position: relative;
             width: 100%;
@@ -186,9 +169,7 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
-        .slider-track {
-            display: flex;
-        }
+        .slider-track { display: flex; }
         .slide {
             flex: 0 0 100%;
             height: 500px;
@@ -224,7 +205,6 @@
             transform: scale(1.2);
         }
 
-        /* Письмо — тот же Dancing Script, что и заголовок */
         .letter-content {
             font-family: 'Dancing Script', 'Parisienne', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 1.5rem;
@@ -254,11 +234,8 @@
             margin-bottom: 1rem;
         }
 
-        /* --- Мобильная адаптация --- */
         @media (max-width: 600px) {
-            body {
-                align-items: stretch;
-            }
+            body { align-items: stretch; }
             .container {
                 width: 100%;
                 max-width: 100%;
@@ -285,15 +262,10 @@
                 max-width: 260px;
                 text-align: center;
             }
-            .proposal-btns {
-                gap: 10px;
-            }
-            .slide {
-                height: 450px;
-            }
+            .proposal-btns { gap: 10px; }
+            .slide { height: 450px; }
         }
 
-        /* Усиленное свечение для iOS Safari */
         @supports (-webkit-overflow-scrolling: touch) {
             h1 {
                 text-shadow:
@@ -305,18 +277,15 @@
     </style>
 </head>
 <body>
-    <!-- Фон с сердцами -->
     <canvas id="hearts"></canvas>
     <div id="particles"></div>
 
-    <!-- Экран 1: Интро -->
     <div class="container active" id="screen-intro">
         <h1>Привет, Любимая...</h1>
         <p>Я хочу показать тебе кое-что особенное.</p>
         <button class="btn" onclick="nextScreen('screen-gallery')">Начать</button>
     </div>
 
-    <!-- Экран 2: Горизонтальный слайдер воспоминаний -->
     <div class="container" id="screen-gallery">
         <h1>Наши Воспоминания</h1>
         <p>Каждый момент с тобой — сокровище.</p>
@@ -339,7 +308,6 @@
         <button class="btn" onclick="nextScreen('screen-letter')">Далее →</button>
     </div>
 
-    <!-- Экран 3: Письмо -->
     <div class="container" id="screen-letter">
         <h1>Для Тебя...</h1>
         <div class="letter-content">
@@ -349,7 +317,6 @@
             onclick="nextScreen('screen-proposal')">Еще Одна Вещь...</button>
     </div>
 
-    <!-- Экран 4: Предложение -->
     <div class="container" id="screen-proposal">
         <h1>Будешь Моей Валентинкой?</h1>
         <p id="proposal-text">Ты мое солнце, моя радость и мое всё.</p>
@@ -365,7 +332,6 @@
         </div>
     </div>
 
-    <!-- Экран 5: Праздник -->
     <div class="container" id="screen-celebration">
         <h1>Я Знал!</h1>
         <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M2Nua2dkOXhwaTg0M3d3bXBtcDdra25scXB3MHZtZTVhamd5dnpoNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l4FGyGSeCm7pOhzKo/giphy.gif" alt="Celebration"
@@ -374,9 +340,9 @@
     </div>
 
     <script>
-        /* --- CONFIGURATION --- */
         const loveLetterText = "Дорогая моя,\nС момента нашей встречи мой мир стал ярче.\nТвоя улыбка - мой любимый вид, а твой смех - мой любимый звук.\nЯ дорожу каждым моментом, проведённым вместе, и хочу создать миллион новых воспоминаний с тобой.\nИтак, у меня есть очень важный вопрос...";
 
+        // Базовые URL гифок
         const catImages = [
             "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
             "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnZvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
@@ -384,7 +350,17 @@
             "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M3FzNjFxcGRma3kzMHRuMzI2dmZhb2UyMm02ZHB4Z2s2YWZzNzR6NiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fFa05KbZowXiEIyRse/giphy.gif"
         ];
 
-        /* ---------- FALLING HEARTS (canvas) ---------- */
+        // Предзагрузчик гифок, чтобы при клике не было задержки
+        const preloadedGifs = [];
+
+        function preloadGifs() {
+            catImages.forEach((src, idx) => {
+                const img = new Image();
+                img.src = src;
+                preloadedGifs[idx] = img;
+            });
+        }
+
         const canvas = document.getElementById("hearts");
         const ctx = canvas.getContext("2d");
 
@@ -397,7 +373,6 @@
 
         const hearts = [];
         const HEARTS_COUNT = 60;
-
         for (let i = 0; i < HEARTS_COUNT; i++) {
             hearts.push({
                 x: Math.random() * canvas.width,
@@ -442,7 +417,6 @@
         }
         createParticles();
 
-        // Навигация по экранам
         function nextScreen(targetId) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             const target = document.getElementById(targetId);
@@ -452,7 +426,6 @@
             }
         }
 
-        // Печать письма
         let charIndex = 0;
         function startTypewriter() {
             const elem = document.getElementById('typewriter-text');
@@ -473,7 +446,6 @@
             }
         }
 
-        // Слайдер: scroll-snap + точки
         const sliderWrapper = document.querySelector('.slider-wrapper');
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.slider-dot');
@@ -515,7 +487,6 @@
             });
         });
 
-        // Логика "Нет"/"Да" + смена гифок (без залипания, моментальная смена)
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
         const proposalText = document.getElementById('proposal-text');
@@ -525,17 +496,16 @@
 
         noBtn.addEventListener('click', (e) => {
             e.preventDefault();
-
             noClickCount++;
 
             const gifIndex = Math.min(noClickCount, catImages.length - 1);
             const baseSrc = catImages[gifIndex];
 
-            // мгновенно меняем гифку: скрыть → сменить src с cache-bust → показать
-            proposalGif.style.visibility = 'hidden';
-            proposalGif.offsetHeight; // форсим рефлоу
-            proposalGif.src = baseSrc + (baseSrc.includes('?') ? '&' : '?') + 't=' + Date.now();
-            proposalGif.style.visibility = 'visible';
+            // мгновенный ресет и смена гифки (без ожидания анимаций/transition)
+            const tmp = baseSrc;
+            proposalGif.src = '';
+            // без таймаута, чтобы iOS сразу перерисовал (синхронная смена src)
+            proposalGif.src = tmp;
 
             if (noClickCount === 1) {
                 proposalText.textContent = 'Ты хотела нажать "Да"?';
@@ -583,7 +553,9 @@
                 });
             }
         }
+
+        // стартуем предзагрузку гифок
+        preloadGifs();
     </script>
 </body>
 </html>
-
