@@ -23,7 +23,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-gradient);
             height: 100vh;
             overflow: hidden;
@@ -32,6 +32,9 @@
             align-items: center;
             color: var(--text-color);
             perspective: 1000px;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            overscroll-behavior: none;
         }
 
         /* Canvas с падающими сердцами */
@@ -103,7 +106,7 @@
             to   { opacity: 1; transform: translateY(0); }
         }
         h1 {
-            font-family: 'Parisienne', cursive;
+            font-family: 'Parisienne', 'Dancing Script', cursive;
             font-size: 3.2rem;
             margin-bottom: 1.5rem;
             color: var(--secondary-color);
@@ -179,6 +182,7 @@
             display: flex;
             transition: transform 0.4s ease;
             touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
         }
         .slide {
             min-width: 100%;
@@ -357,7 +361,6 @@
         /* --- CONFIGURATION --- */
         const loveLetterText = "Дорогая моя, С момента нашей встречи мой мир стал ярче. Твоя улыбка — мой любимый вид, а твой смех — мой любимый звук. Я дорожу каждым моментом, проведённым вместе, и хочу создать миллион новых воспоминаний с тобой. Итак, у меня есть очень важный вопрос...";
 
-        // 4 гифки: первая показывается сразу, остальные — при нажатиях "Нет"
         const catImages = [
             "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
             "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnZvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
@@ -473,10 +476,8 @@
             });
         }
 
-        // ресайз – чтобы ширина учитывалась корректно
         window.addEventListener('resize', () => updateSlider(currentSlide));
 
-        // клики по точкам
         dots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const idx = parseInt(dot.dataset.index, 10);
@@ -484,7 +485,6 @@
             });
         });
 
-        // touch / mouse
         function pointerDown(clientX) {
             isDragging = true;
             startX = clientX;
@@ -503,7 +503,7 @@
             const diff = clientX - startX;
             sliderTrack.style.transition = 'transform 0.4s ease';
 
-            const threshold = sliderTrack.clientWidth * 0.15; // порог свайпа ~15% ширины
+            const threshold = sliderTrack.clientWidth * 0.15;
             if (diff < -threshold && currentSlide < slides.length - 1) {
                 updateSlider(currentSlide + 1);
             } else if (diff > threshold && currentSlide > 0) {
@@ -526,16 +526,19 @@
             pointerUp(e.clientX);
         });
 
-        // Touch events
+        // Touch events для iOS Safari
         sliderTrack.addEventListener('touchstart', (e) => {
             pointerDown(e.touches[0].clientX);
-        }, { passive: true });
+        }, { passive: false });
+
         sliderTrack.addEventListener('touchmove', (e) => {
             pointerMove(e.touches[0].clientX);
-        }, { passive: true });
+            e.preventDefault(); // блокируем горизонтальный скролл страницы
+        }, { passive: false });
+
         sliderTrack.addEventListener('touchend', (e) => {
             pointerUp(e.changedTouches[0].clientX);
-        });
+        }, { passive: false });
 
         // Инициализация
         updateSlider(0);
@@ -553,7 +556,6 @@
 
             noClickCount++;
 
-            // индекс гифки: 0 — начальная, далее 1,2,3 при кликах
             const gifIndex = Math.min(noClickCount, catImages.length - 1);
             proposalGif.src = catImages[gifIndex];
 
