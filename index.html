@@ -78,12 +78,13 @@
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
-        /* Общий wrapper для всех экранов */
+        /* Один общий центрирующий wrapper, как на ПК, так и на мобиле */
         .card-wrapper {
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
         }
 
         .container {
@@ -267,15 +268,17 @@
                 padding: 1.5rem 1.2rem calc(2.5rem + env(safe-area-inset-bottom));
             }
 
-            /* один общий блок: все экраны внутри, сами контейнеры абсолютные */
+            /* На мобиле сохраняем обычное позиционирование, но убираем анимацию появления,
+               чтобы визуально блок не "появлялся заново" */
             .container {
                 width: 100%;
+                max-width: 100%;
                 height: auto;
                 border-radius: 20px;
                 box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
-                position: absolute;
-                left: 0;
-                top: 0;
+                position: static;
+                animation: none;
+                transform: none;
             }
 
             h1 {
@@ -385,7 +388,7 @@
 
         const catImages = [
             "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
-            "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnЗvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
+            "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnZvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
             "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExamlhbGdkMHZtdzYwYXNrY3MzcWh3c3U1NTdncTdkMDBneDBlMzFsaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/pY8jLmZw0ElqvVeRH4/giphy.gif",
             "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M3FzNjFxcGRma3kzMHRuMzI2dmZhb2UyMm02ZHB4Z2s2YWZzNzR6NiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fFa05KbZowXiEIyRse/giphy.gif"
         ];
@@ -539,7 +542,6 @@
             const gifIndex = Math.min(noClickCount, catImages.length - 1);
             const baseSrc = catImages[gifIndex];
 
-            // мгновенный ресет и смена гифки
             proposalGif.src = '';
             proposalGif.src = baseSrc;
 
