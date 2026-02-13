@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для Моей Вечной Валентины</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Parisienne&family=Poppins:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e31b6d;
+            --secondary-color: #ff99ac;
+            --accent-color: #fff0f3;
+            --text-color: #fff;
+            --bg-gradient: linear-gradient(135deg, #2e001f 0%, #680026 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            perspective: 1000px;
+        }
+
+        /* Canvas с падающими сердцами */
+        canvas#hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+        }
+
+        /* Particle Background */
+        #particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            animation: float 10s infinite linear;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Основные контейнеры/экраны */
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 90%;
+            width: 600px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+        .container.active {
+            display: flex;
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            font-family: 'Parisienne', cursive;
+            font-size: 3.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            text-shadow: 0 0 15px rgba(227, 27, 109, 0.8);
+        }
+        p {
+            font-size: 1.05rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.7;
+            color: #eee;
+        }
+
+        /* Кнопки */
+        .btn {
+            padding: 12px 28px;
+            font-size: 1.05rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            margin: 8px;
+            position: relative;
+            background: linear-gradient(45deg, #ff3366, #ff6b6b);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.4);
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+            outline: none;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+        }
+        .btn:active,
+        .btn:focus {
+            outline: none;
+            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.4);
+            transform: none;
+        }
+
+        .proposal-btns {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        #yesBtn {
+            position: relative;
+            z-index: 1;
+        }
+        #noBtn {
+            background: #4a4a4a;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Горизонтальный слайдер воспоминаний */
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .slider-track {
+            display: flex;
+            transition: transform 0.4s ease;
+            touch-action: pan-y;
+        }
+        .slide {
+            min-width: 100%;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .slider-dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+
+        /* Письмо */
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.96);
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            min-height: 180px;
+            max-height: 60vh;
+            overflow-y: auto;
+            width: 100%;
+        }
+        .cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Гифка у текста "ты мое солнце" */
+        .proposal-header-img {
+            width: 240px;
+            max-width: 85%;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            margin-bottom: 1rem;
+        }
+
+        /* --- Мобильная адаптация --- */
+        @media (max-width: 600px) {
+            body {
+                align-items: stretch;
+            }
+            .container {
+                width: 100%;
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 1.5rem 1.2rem 2rem;
+                justify-content: center;
+            }
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 1rem;
+            }
+            p {
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+            }
+            .letter-content {
+                font-size: 1.25rem;
+                max-height: 55vh;
+            }
+            .btn {
+                width: 100%;
+                max-width: 260px;
+                text-align: center;
+            }
+            .proposal-btns {
+                gap: 10px;
+            }
+            .slide {
+                height: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Фон с сердцами -->
+    <canvas id="hearts"></canvas>
+    <div id="particles"></div>
+
+    <!-- Экран 1: Интро -->
+    <div class="container active" id="screen-intro">
+        <h1>Привет, Любимая...</h1>
+        <p>Я хочу показать тебе кое-что особенное.</p>
+        <button class="btn" onclick="nextScreen('screen-gallery')">Начать</button>
+    </div>
+
+    <!-- Экран 2: Горизонтальный слайдер воспоминаний -->
+    <div class="container" id="screen-gallery">
+        <h1>Наши Воспоминания</h1>
+        <p>Каждый момент с тобой — сокровище.</p>
+
+        <div class="slider-wrapper">
+            <div class="slider-track" id="slider-track">
+                <div class="slide"><img src="img/1.jpg" alt="Memory 1"></div>
+                <div class="slide"><img src="img/2.jpg" alt="Memory 2"></div>
+                <div class="slide"><img src="img/3.jpg" alt="Memory 3"></div>
+                <div class="slide"><img src="img/4.jpg" alt="Memory 4"></div>
+            </div>
+        </div>
+        <div class="slider-dots" id="slider-dots">
+            <div class="slider-dot active" data-index="0"></div>
+            <div class="slider-dot" data-index="1"></div>
+            <div class="slider-dot" data-index="2"></div>
+            <div class="slider-dot" data-index="3"></div>
+        </div>
+
+        <button class="btn" onclick="nextScreen('screen-letter')">Далее →</button>
+    </div>
+
+    <!-- Экран 3: Письмо -->
+    <div class="container" id="screen-letter">
+        <h1>Для Тебя...</h1>
+        <div class="letter-content">
+            <span id="typewriter-text"></span><span class="cursor"></span>
+        </div>
+        <button class="btn" id="letter-next-btn" style="opacity: 0; pointer-events: none;"
+            onclick="nextScreen('screen-proposal')">Еще Одна Вещь...</button>
+    </div>
+
+    <!-- Экран 4: Предложение -->
+    <div class="container" id="screen-proposal">
+        <h1>Будешь Моей Валентинкой?</h1>
+        <p id="proposal-text">Ты мое солнце, моя радость и мое всё.</p>
+        <img
+          class="proposal-header-img"
+          id="proposal-gif"
+          src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif"
+          alt="Cat love gif"
+        >
+        <div class="proposal-btns">
+            <button class="btn" id="yesBtn" onclick="acceptProposal()">ДА!</button>
+            <button class="btn" id="noBtn">Нет</button>
+        </div>
+    </div>
+
+    <!-- Экран 5: Праздник -->
+    <div class="container" id="screen-celebration">
+        <h1>Я Знал!</h1>
+        <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M2Nua2dkOXhwaTg0M3d3bXBtcDdra25scXB3MHZtZTVhamd5dnpoNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l4FGyGSeCm7pOhzKo/giphy.gif" alt="Celebration"
+            style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
+        <p>Я так люблю тебя! Не могу дождаться нашей встречи!</p>
+    </div>
+
+    <script>
+        /* --- CONFIGURATION --- */
+        const loveLetterText = "Дорогая моя, С момента нашей встречи мой мир стал ярче. Твоя улыбка — мой любимый вид, а твой смех — мой любимый звук. Я дорожу каждым моментом, проведённым вместе, и хочу создать миллион новых воспоминаний с тобой. Итак, у меня есть очень важный вопрос...";
+
+        // 4 гифки: первая показывается сразу, остальные — при нажатиях "Нет"
+        const catImages = [
+            "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
+            "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnZvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
+            "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExamlhbGdkMHZtdzYwYXNrY3MzcWh3c3U1NTdncTdkMDBneDBlMzFsaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/pY8jLmZw0ElqvVeRH4/giphy.gif",
+            "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M3FzNjFxcGRma3kzMHRuMzI2dmZhb2UyMm02ZHB4Z2s2YWZzNzR6NiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fFa05KbZowXiEIyRse/giphy.gif"
+        ];
+
+        /* ---------- FALLING HEARTS (canvas) ---------- */
+        const canvas = document.getElementById("hearts");
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const hearts = [];
+        const HEARTS_COUNT = 60;
+
+        for (let i = 0; i < HEARTS_COUNT; i++) {
+            hearts.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 20 + 10,
+                speed: Math.random() * 1 + 0.5
+            });
+        }
+
+        function drawHeart(x, y, size) {
+            ctx.fillStyle = "rgba(255,0,80,0.8)";
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(x - size / 2, y - size / 2, x - size, y + size / 3, x, y + size);
+            ctx.bezierCurveTo(x + size, y + size / 3, x + size / 2, y - size / 2, x, y);
+            ctx.fill();
+        }
+
+        function animateHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(h => {
+                h.y += h.speed;
+                if (h.y > canvas.height) h.y = -20;
+                drawHeart(h.x, h.y, h.size);
+            });
+            requestAnimationFrame(animateHearts);
+        }
+        animateHearts();
+
+        // Particle System
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.width = Math.random() * 10 + 5 + 'px';
+                p.style.height = p.style.width;
+                p.style.animationDuration = Math.random() * 10 + 10 + 's';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // Навигация по экранам
+        function nextScreen(targetId) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            const target = document.getElementById(targetId);
+            target.classList.add('active');
+            if (targetId === 'screen-letter') {
+                startTypewriter();
+            }
+        }
+
+        // Печать письма
+        let charIndex = 0;
+        function startTypewriter() {
+            const elem = document.getElementById('typewriter-text');
+            elem.innerHTML = "";
+            charIndex = 0;
+            type();
+        }
+        function type() {
+            if (charIndex < loveLetterText.length) {
+                const char = loveLetterText.charAt(charIndex);
+                document.getElementById('typewriter-text').innerHTML += char === '\n' ? '<br>' : char;
+                charIndex++;
+                setTimeout(type, 45);
+            } else {
+                const btn = document.getElementById('letter-next-btn');
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Классический слайдер: свайп влево/вправо
+        const sliderTrack = document.getElementById('slider-track');
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+        let startX = 0;
+        let currentTranslate = 0;
+        let isDragging = false;
+
+        function updateSlider(index) {
+            currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+            const offset = -currentSlide * sliderTrack.clientWidth;
+            sliderTrack.style.transform = `translateX(${offset}px)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        // ресайз – чтобы ширина учитывалась корректно
+        window.addEventListener('resize', () => updateSlider(currentSlide));
+
+        // клики по точкам
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const idx = parseInt(dot.dataset.index, 10);
+                updateSlider(idx);
+            });
+        });
+
+        // touch / mouse
+        function pointerDown(clientX) {
+            isDragging = true;
+            startX = clientX;
+            const transform = sliderTrack.style.transform.match(/-?\d+\.?\d*/);
+            currentTranslate = transform ? parseFloat(transform[0]) : 0;
+            sliderTrack.style.transition = 'none';
+        }
+        function pointerMove(clientX) {
+            if (!isDragging) return;
+            const diff = clientX - startX;
+            sliderTrack.style.transform = `translateX(${currentTranslate + diff}px)`;
+        }
+        function pointerUp(clientX) {
+            if (!isDragging) return;
+            isDragging = false;
+            const diff = clientX - startX;
+            sliderTrack.style.transition = 'transform 0.4s ease';
+
+            const threshold = sliderTrack.clientWidth * 0.15; // порог свайпа ~15% ширины
+            if (diff < -threshold && currentSlide < slides.length - 1) {
+                updateSlider(currentSlide + 1);
+            } else if (diff > threshold && currentSlide > 0) {
+                updateSlider(currentSlide - 1);
+            } else {
+                updateSlider(currentSlide);
+            }
+        }
+
+        // Mouse events
+        sliderTrack.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            pointerDown(e.clientX);
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            pointerMove(e.clientX);
+        });
+        window.addEventListener('mouseup', (e) => {
+            pointerUp(e.clientX);
+        });
+
+        // Touch events
+        sliderTrack.addEventListener('touchstart', (e) => {
+            pointerDown(e.touches[0].clientX);
+        }, { passive: true });
+        sliderTrack.addEventListener('touchmove', (e) => {
+            pointerMove(e.touches[0].clientX);
+        }, { passive: true });
+        sliderTrack.addEventListener('touchend', (e) => {
+            pointerUp(e.changedTouches[0].clientX);
+        });
+
+        // Инициализация
+        updateSlider(0);
+
+        // Логика "Нет"/"Да" + смена гифок
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const proposalText = document.getElementById('proposal-text');
+        const proposalGif = document.getElementById('proposal-gif');
+
+        let noClickCount = 0;
+
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            noClickCount++;
+
+            // индекс гифки: 0 — начальная, далее 1,2,3 при кликах
+            const gifIndex = Math.min(noClickCount, catImages.length - 1);
+            proposalGif.src = catImages[gifIndex];
+
+            if (noClickCount === 1) {
+                proposalText.textContent = 'Ты хотела нажать "Да"?';
+                noBtn.style.transform = 'scale(0.85)';
+                yesBtn.style.transform = 'scale(1.1)';
+            } else if (noClickCount === 2) {
+                proposalText.textContent = 'У тебя дрогнула рука?';
+                noBtn.style.transform = 'scale(0.7)';
+                yesBtn.style.transform = 'scale(1.25)';
+            } else if (noClickCount === 3) {
+                proposalText.textContent = 'Я буду плакать';
+                noBtn.style.transform = 'scale(0.5)';
+                yesBtn.style.transform = 'scale(1.4)';
+
+                setTimeout(() => {
+                    noBtn.style.display = 'none';
+                }, 400);
+            }
+        });
+
+        // "Да" — переход к празднованию
+        function acceptProposal() {
+            nextScreen('screen-celebration');
+            triggerConfetti();
+        }
+
+        // Конфетти
+        function triggerConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.zIndex = '1000';
+                document.body.appendChild(confetti);
+                confetti.animate([
+                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 3000,
+                    easing: 'linear',
+                    fill: 'forwards'
+                });
+            }
+        }
+    </script>
+</body>
+</html>
