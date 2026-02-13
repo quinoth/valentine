@@ -78,6 +78,14 @@
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
+        /* Общий wrapper для всех экранов */
+        .card-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .container {
             background: var(--glass-bg);
             backdrop-filter: none;
@@ -89,7 +97,6 @@
             text-align: center;
             max-width: 90%;
             width: 600px;
-            position: relative;
             transform-style: preserve-3d;
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: none;
@@ -249,15 +256,28 @@
             body {
                 align-items: stretch;
             }
-            .container {
+
+            .card-wrapper {
                 width: 100%;
                 max-width: 100%;
                 height: 100vh;
-                border-radius: 0;
-                padding: 1.5rem 1.2rem 2.5rem;
+                display: flex;
+                align-items: center;
                 justify-content: center;
-                padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+                padding: 1.5rem 1.2rem calc(2.5rem + env(safe-area-inset-bottom));
             }
+
+            /* один общий блок: все экраны внутри, сами контейнеры абсолютные */
+            .container {
+                width: 100%;
+                height: auto;
+                border-radius: 20px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+
             h1 {
                 font-size: 2.2rem;
                 margin-bottom: 1rem;
@@ -299,63 +319,65 @@
     <canvas id="hearts"></canvas>
     <div id="particles"></div>
 
-    <div class="container active" id="screen-intro">
-        <h1>Привет, Любимая...</h1>
-        <p>Я хочу показать тебе кое-что особенное.</p>
-        <button class="btn" onclick="nextScreen('screen-gallery')">Начать</button>
-    </div>
+    <div class="card-wrapper">
+        <div class="container active" id="screen-intro">
+            <h1>Привет, Любимая...</h1>
+            <p>Я хочу показать тебе кое-что особенное.</p>
+            <button class="btn" onclick="nextScreen('screen-gallery')">Начать</button>
+        </div>
 
-    <div class="container" id="screen-gallery">
-        <h1>Наши Воспоминания</h1>
-        <p>Каждый момент с тобой - сокровище.</p>
+        <div class="container" id="screen-gallery">
+            <h1>Наши Воспоминания</h1>
+            <p>Каждый момент с тобой — сокровище.</p>
 
-        <div class="slider-wrapper">
-            <div class="slider-track" id="slider-track">
-                <div class="slide"><img src="img/1.jpg" alt="Memory 1"></div>
-                <div class="slide"><img src="img/2.jpg" alt="Memory 2"></div>
-                <div class="slide"><img src="img/3.jpg" alt="Memory 3"></div>
-                <div class="slide"><img src="img/4.jpg" alt="Memory 4"></div>
+            <div class="slider-wrapper">
+                <div class="slider-track" id="slider-track">
+                    <div class="slide"><img src="img/1.jpg" alt="Memory 1"></div>
+                    <div class="slide"><img src="img/2.jpg" alt="Memory 2"></div>
+                    <div class="slide"><img src="img/3.jpg" alt="Memory 3"></div>
+                    <div class="slide"><img src="img/4.jpg" alt="Memory 4"></div>
+                </div>
+            </div>
+            <div class="slider-dots" id="slider-dots">
+                <div class="slider-dot active" data-index="0"></div>
+                <div class="slider-dot" data-index="1"></div>
+                <div class="slider-dot" data-index="2"></div>
+                <div class="slider-dot" data-index="3"></div>
+            </div>
+
+            <button class="btn" onclick="nextScreen('screen-letter')">Далее →</button>
+        </div>
+
+        <div class="container" id="screen-letter">
+            <h1>Для Тебя...</h1>
+            <div class="letter-content">
+                <span id="typewriter-text"></span><span class="cursor"></span>
+            </div>
+            <button class="btn" id="letter-next-btn" style="opacity: 0; pointer-events: none;"
+                onclick="nextScreen('screen-proposal')">Еще Одна Вещь...</button>
+        </div>
+
+        <div class="container" id="screen-proposal">
+            <h1>Будешь Моей Валентинкой?</h1>
+            <p id="proposal-text">Ты мое солнце, моя радость и мое всё.</p>
+            <img
+              class="proposal-header-img"
+              id="proposal-gif"
+              src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif"
+              alt="Cat love gif"
+            >
+            <div class="proposal-btns">
+                <button class="btn" id="yesBtn" onclick="acceptProposal()">ДА!</button>
+                <button class="btn" id="noBtn">Нет</button>
             </div>
         </div>
-        <div class="slider-dots" id="slider-dots">
-            <div class="slider-dot active" data-index="0"></div>
-            <div class="slider-dot" data-index="1"></div>
-            <div class="slider-dot" data-index="2"></div>
-            <div class="slider-dot" data-index="3"></div>
+
+        <div class="container" id="screen-celebration">
+            <h1>Я Знал!</h1>
+            <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M2Nua2dkOXhwaTg0M3d3bXBtcDdra25scXB3MHZtZTVhamd5dnpoNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l4FGyGSeCm7pOhzKo/giphy.gif" alt="Celebration"
+                style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
+            <p>Я так люблю тебя! Не могу дождаться нашей встречи!</p>
         </div>
-
-        <button class="btn" onclick="nextScreen('screen-letter')">Далее →</button>
-    </div>
-
-    <div class="container" id="screen-letter">
-        <h1>Для Тебя...</h1>
-        <div class="letter-content">
-            <span id="typewriter-text"></span><span class="cursor"></span>
-        </div>
-        <button class="btn" id="letter-next-btn" style="opacity: 0; pointer-events: none;"
-            onclick="nextScreen('screen-proposal')">Еще Одна Вещь...</button>
-    </div>
-
-    <div class="container" id="screen-proposal">
-        <h1>Будешь Моей Валентинкой?</h1>
-        <p id="proposal-text">Ты мое солнце, моя радость и мое всё.</p>
-        <img
-          class="proposal-header-img"
-          id="proposal-gif"
-          src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif"
-          alt="Cat love gif"
-        >
-        <div class="proposal-btns">
-            <button class="btn" id="yesBtn" onclick="acceptProposal()">ДА!</button>
-            <button class="btn" id="noBtn">Нет</button>
-        </div>
-    </div>
-
-    <div class="container" id="screen-celebration">
-        <h1>Я Знал!</h1>
-        <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M2Nua2dkOXhwaTg0M3d3bXBtcDdra25scXB3MHZtZTVhamd5dnpoNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l4FGyGSeCm7pOhzKo/giphy.gif" alt="Celebration"
-            style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
-        <p>Я так люблю тебя! Не могу дождаться нашей встречи!</p>
     </div>
 
     <script>
@@ -363,7 +385,7 @@
 
         const catImages = [
             "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTR5dTdkeGd3ZXF0ajl0dzBtb21ueWliMjdmYnducTQ3eXdneDluMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wvYNSqBAMDVx8CEYkt/giphy.gif",
-            "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnZvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
+            "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3JqNnЗvenRxYzZrY215cW9ycGJwZ2xhdXdtanlzcXU1YjMwOTc4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/901mxGLGQN2PyCQpoc/giphy.gif",
             "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExamlhbGdkMHZtdzYwYXNrY3MzcWh3c3U1NTdncTdkMDBneDBlMzFsaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/pY8jLmZw0ElqvVeRH4/giphy.gif",
             "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M3FzNjFxcGRma3kzMHRuMzI2dmZhb2UyMm02ZHB4Z2s2YWZzNzR6NiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/fFa05KbZowXiEIyRse/giphy.gif"
         ];
@@ -572,4 +594,3 @@
     </script>
 </body>
 </html>
-
