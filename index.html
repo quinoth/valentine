@@ -23,7 +23,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-gradient);
             height: 100vh;
             overflow: hidden;
@@ -106,11 +106,14 @@
             to   { opacity: 1; transform: translateY(0); }
         }
         h1 {
-            font-family: 'Parisienne', 'Dancing Script', cursive;
+            font-family: 'Parisienne', 'Dancing Script', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', cursive;
             font-size: 3.2rem;
             margin-bottom: 1.5rem;
             color: var(--secondary-color);
-            text-shadow: 0 0 15px rgba(227, 27, 109, 0.8);
+            text-shadow:
+                0 0 6px rgba(227, 27, 109, 0.9),
+                0 0 14px rgba(227, 27, 109, 0.7),
+                0 0 24px rgba(227, 27, 109, 0.5);
         }
         p {
             font-size: 1.05rem;
@@ -286,6 +289,16 @@
                 height: 450px;
             }
         }
+
+        /* Усиленное свечение для iOS Safari */
+        @supports (-webkit-overflow-scrolling: touch) {
+            h1 {
+                text-shadow:
+                    0 0 8px rgba(227, 27, 109, 1),
+                    0 0 18px rgba(227, 27, 109, 0.9),
+                    0 0 28px rgba(227, 27, 109, 0.7);
+            }
+        }
     </style>
 </head>
 <body>
@@ -295,7 +308,7 @@
 
     <!-- Экран 1: Интро -->
     <div class="container active" id="screen-intro">
-        <h1>Привет, Любимая...</h1>
+        <h1>Привет, 1Любимая...</h1>
         <p>Я хочу показать тебе кое-что особенное.</p>
         <button class="btn" onclick="nextScreen('screen-gallery')">Начать</button>
     </div>
@@ -566,5 +579,3 @@
     </script>
 </body>
 </html>
-
-
